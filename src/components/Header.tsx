@@ -59,7 +59,7 @@ export function Header() {
       </a>
       <div className="hdr-inner">
         <a href="#top" className="hdr-brand" onClick={go('#top')} aria-label={`${brand.full} home`}>
-          <span className="hdr-brand-main">{brand.name}</span>
+          <img className="hdr-logo" src="/assets/logo.png" alt="" />
           <span className="hdr-brand-sub">{brand.suffix}</span>
         </a>
 

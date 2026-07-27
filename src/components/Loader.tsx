@@ -40,7 +40,7 @@ export function Loader({ progress, done, onExit }: Props) {
     <div className="loader" ref={rootRef} role="status" aria-live="polite">
       <div className="loader-inner">
         <p className="loader-brand" data-loader-fade>
-          bbbb <span>MEDICAL VISUAL</span>
+          <img className="loader-logo" src="/assets/logo.png" alt="" /> <span>MEDICAL VISUAL</span>
         </p>
         <div className="loader-track" data-loader-fade>
           <span className="loader-bar" ref={barRef} />

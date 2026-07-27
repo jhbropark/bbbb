@@ -261,6 +261,12 @@ ol {
 .loader-brand span {
   color: var(--accent);
 }
+.loader-logo {
+  height: 1.35em;
+  width: auto;
+  display: inline-block;
+  vertical-align: -0.24em;
+}
 .loader-track {
   height: 2px;
   background: var(--line-2);
@@ -337,6 +343,11 @@ ol {
   font-weight: 800;
   letter-spacing: 0.005em;
   font-size: 1.25rem;
+}
+.hdr-logo {
+  height: 21px;
+  width: auto;
+  display: block;
 }
 .hdr-brand-sub {
   font-size: 0.56rem;

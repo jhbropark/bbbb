@@ -35,7 +35,7 @@ export default function WorkDetail() {
     <div className="detail">
       <header className="detail-bar">
         <Link to="/" className="hdr-brand" aria-label={`${brand.full} home`}>
-          <span className="hdr-brand-main">{brand.name}</span>
+          <img className="hdr-logo" src="/assets/logo.png" alt="" />
           <span className="hdr-brand-sub">{brand.suffix}</span>
         </Link>
         <div className="detail-bar-right">
