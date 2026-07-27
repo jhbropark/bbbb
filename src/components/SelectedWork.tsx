@@ -1,0 +1,105 @@
+import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
+import { useReveal } from '../hooks/useReveal';
+import { BioField } from './BioField';
+import { projects, type Project } from '../data/brand';
+import { useLang } from '../i18n/lang';
+import { ui } from '../i18n/ui';
+
+interface Props {
+  reduced: boolean;
+  isMobile: boolean;
+}
+
+/** Hover-to-play on desktop; play the single most-centred card on mobile. */
+function WorkVideo({ src, poster, isMobile }: { src: string; poster: string; isMobile: boolean }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    const wrap = wrapRef.current;
+    if (!v || !wrap) return;
+
+    if (isMobile) {
+      const io = new IntersectionObserver(
+        (entries) => entries.forEach((e) => (e.isIntersecting ? v.play().catch(() => {}) : v.pause())),
+        { threshold: 0.6 },
+      );
+      io.observe(wrap);
+      return () => io.disconnect();
+    }
+    const enter = () => v.play().catch(() => {});
+    const leave = () => {
+      v.pause();
+      v.currentTime = 0;
+    };
+    wrap.addEventListener('mouseenter', enter);
+    wrap.addEventListener('mouseleave', leave);
+    return () => {
+      wrap.removeEventListener('mouseenter', enter);
+      wrap.removeEventListener('mouseleave', leave);
+    };
+  }, [isMobile]);
+
+  return (
+    <div className="work-media" ref={wrapRef} data-cursor="Play">
+      <video ref={videoRef} muted loop playsInline preload="none" poster={poster} aria-hidden="true">
+        <source src={src} type="video/mp4" />
+      </video>
+    </div>
+  );
+}
+
+function Card({ p, i, isMobile }: { p: Project; i: number; isMobile: boolean }) {
+  const { t } = useLang();
+  return (
+    <Link
+      to={`/work/${p.slug}`}
+      className={`work-card work-card--${p.size}`}
+      data-reveal
+      data-cursor="View"
+      aria-label={`${p.title} — ${t(p.category)} ${t(ui.work.viewAria)}`}
+    >
+      {p.media === 'video' && p.src && p.poster ? (
+        <WorkVideo src={p.src} poster={p.poster} isMobile={isMobile} />
+      ) : (
+        <div className="work-media">
+          <BioField seed={7 + i} scheme={p.scheme || 'blue'} />
+        </div>
+      )}
+      <div className="work-meta">
+        <h3 className="work-title">{p.title}</h3>
+        <p className="work-cat">
+          {t(p.category)} · {t(p.kind)}
+        </p>
+        <p className="work-desc">{t(p.intent)}</p>
+        <span className="work-more">
+          {t(ui.work.more)} <ArrowUpRight size={15} strokeWidth={2} />
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+export function SelectedWork({ reduced, isMobile }: Props) {
+  const { t } = useLang();
+  const ref = useRef<HTMLElement>(null);
+  useReveal(ref, !reduced);
+
+  return (
+    <section id="work" className="section work" ref={ref}>
+      <div className="shell work-head">
+        <p className="eyebrow" data-reveal>
+          {t(ui.work.eyebrow)}
+        </p>
+      </div>
+      <div className="shell work-grid">
+        {projects.map((p, i) => (
+          <Card key={p.title} p={p} i={i} isMobile={isMobile} />
+        ))}
+      </div>
+    </section>
+  );
+}

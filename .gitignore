@@ -1,0 +1,8 @@
+node_modules
+dist
+*.tsbuildinfo
+dev.log
+.claude
+.vercel
+.DS_Store
+sia-linkbuild.html
