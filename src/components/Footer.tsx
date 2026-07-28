@@ -1,13 +1,25 @@
+import { useRef } from 'react';
 import { brand } from '../data/brand';
 import { useLang } from '../i18n/lang';
+import { useReveal } from '../hooks/useReveal';
+import { useReducedMotion } from '../hooks/useReducedMotion';
+import { BbbbMark } from './BbbbMark';
 
 export function Footer() {
   const { t } = useLang();
+  const reduced = useReducedMotion();
+  const ref = useRef<HTMLElement>(null);
+  useReveal(ref, !reduced);
+
   return (
-    <footer className="footer">
+    <footer className="footer" ref={ref}>
+      <div className="shell footer-sign" data-reveal>
+        <BbbbMark className="footer-mark" />
+      </div>
+
       <div className="shell footer-inner">
         <div className="footer-brand">
-          <p className="footer-name">{brand.full}</p>
+          <p className="footer-name">{brand.suffix}</p>
           <p className="footer-loc">{t(brand.location)}</p>
         </div>
 

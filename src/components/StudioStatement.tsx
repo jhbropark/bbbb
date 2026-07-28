@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useReveal } from '../hooks/useReveal';
 import { useLang } from '../i18n/lang';
 import { ui } from '../i18n/ui';
+import { BbbbMark } from './BbbbMark';
 
 export function StudioStatement({ reduced }: { reduced: boolean }) {
   const { lang, t } = useLang();
@@ -11,6 +12,7 @@ export function StudioStatement({ reduced }: { reduced: boolean }) {
 
   return (
     <section id="studio" className="section statement" ref={ref}>
+      <BbbbMark className="statement-watermark" decorative />
       <div className="shell statement-inner">
         <h2 className="statement-headline" data-reveal>
           {headline.map((line, i) => (

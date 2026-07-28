@@ -980,6 +980,25 @@ ol {
 .statement {
   background: var(--navy);
   color: var(--on-navy);
+  position: relative;
+  overflow: hidden;
+}
+.statement-inner {
+  position: relative;
+  z-index: 1;
+}
+/* faint oversized wordmark = ambient exhibition depth behind the statement */
+.statement-watermark {
+  position: absolute;
+  right: -5%;
+  top: 50%;
+  transform: translateY(-46%);
+  width: min(62%, 720px);
+  height: auto;
+  color: var(--on-navy);
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
 }
 .statement-headline {
   font-family: var(--font-display);
@@ -1048,6 +1067,16 @@ ol {
   background: var(--paper);
   border-top: 1px solid var(--line);
   padding-block: clamp(2.4rem, 4vw, 3.4rem);
+}
+/* oversized wordmark sign-off crowning the footer */
+.footer-sign {
+  margin-bottom: clamp(1.8rem, 3.6vw, 3rem);
+}
+.footer-mark {
+  display: block;
+  width: auto;
+  height: clamp(64px, 13vw, 186px);
+  color: var(--ink);
 }
 .footer-inner {
   display: flex;
