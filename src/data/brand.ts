@@ -15,7 +15,7 @@ export const brand = {
   sloganKo: ['의학을,', '이해하는 언어로 옮깁니다.'],
   social: [
     { label: 'Instagram', href: 'https://instagram.com' },
-    { label: 'Vimeo', href: 'https://vimeo.com' },
+    { label: 'YouTube', href: 'https://www.youtube.com/@bbbb.beauty.official' },
     { label: 'LinkedIn', href: 'https://linkedin.com' },
   ],
 };
