@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { useReveal } from '../hooks/useReveal';
@@ -16,11 +16,30 @@ interface Props {
 function WorkVideo({ src, poster, isMobile }: { src: string; poster: string; isMobile: boolean }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  // Video posters are requested eagerly by browsers even with preload="none".
+  // Attach poster and source only when the card is close to the viewport.
+  useEffect(() => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setLoaded(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: '800px 0px' },
+    );
+    io.observe(wrap);
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     const v = videoRef.current;
     const wrap = wrapRef.current;
-    if (!v || !wrap) return;
+    if (!v || !wrap || !loaded) return;
 
     if (isMobile) {
       const io = new IntersectionObserver(
@@ -41,12 +60,20 @@ function WorkVideo({ src, poster, isMobile }: { src: string; poster: string; isM
       wrap.removeEventListener('mouseenter', enter);
       wrap.removeEventListener('mouseleave', leave);
     };
-  }, [isMobile]);
+  }, [isMobile, loaded]);
 
   return (
     <div className="work-media" ref={wrapRef} data-cursor="Play">
-      <video ref={videoRef} muted loop playsInline preload="none" poster={poster} aria-hidden="true">
-        <source src={src} type="video/mp4" />
+      <video
+        ref={videoRef}
+        muted
+        loop
+        playsInline
+        preload="none"
+        poster={loaded ? poster : undefined}
+        aria-hidden="true"
+      >
+        {loaded && <source src={src} type="video/mp4" />}
       </video>
     </div>
   );
