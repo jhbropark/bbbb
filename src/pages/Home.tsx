@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSmoothScroll } from '../hooks/useSmoothScroll';
 import { useReducedMotion } from '../hooks/useReducedMotion';
@@ -16,6 +17,7 @@ import { Process } from '../components/Process';
 import { StudioStatement } from '../components/StudioStatement';
 import { Contact } from '../components/Contact';
 import { Footer } from '../components/Footer';
+import { applySeo, SITE_URL } from '../seo';
 
 // Preview/deep-link aid: `?static` disables Lenis + hero pin (opt-in only).
 const FORCE_STATIC =
@@ -33,14 +35,40 @@ const introAlreadyShown =
 
 export default function Home() {
   const { lang } = useLang();
+  const location = useLocation();
   const reduced = useReducedMotion() || FORCE_STATIC;
   const isMobile = useMediaQuery('(max-width: 768px)');
-  // Scroll-scrub runs on desktop AND mobile; only reduced motion opts out.
-  const heroEnabled = !reduced;
+  // Mobile keeps the message and CTA visible without requiring a scrub gesture.
+  const heroEnabled = !reduced && !isMobile;
 
-  useSmoothScroll(!reduced);
+  useSmoothScroll(!reduced && !isMobile);
 
-  const skipIntro = FORCE_STATIC || introAlreadyShown;
+  useEffect(() => {
+    const ko = lang === 'ko';
+    const title = ko
+      ? 'bbbb MEDICAL VISUAL — 의학을 이해하는 언어로'
+      : 'bbbb MEDICAL VISUAL — Medicine, Made Visible';
+    const description = ko
+      ? '제약·바이오·메디컬 뷰티 기술을 정확하고 설득력 있는 시각 경험으로 번역하는 메디컬 비주얼 스튜디오.'
+      : 'A medical visualization studio translating pharma, biotech, and medical beauty technology into accurate, persuasive visual experiences.';
+    applySeo({
+      title,
+      description,
+      path: `/${lang}/`,
+      lang,
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@type': 'ProfessionalService',
+        name: 'bbbb MEDICAL VISUAL',
+        url: SITE_URL,
+        email: 'im@bbbb.beauty',
+        areaServed: 'Worldwide',
+        address: { '@type': 'PostalAddress', addressLocality: 'Seoul', addressCountry: 'KR' },
+      },
+    });
+  }, [lang, location.pathname]);
+
+  const skipIntro = FORCE_STATIC || introAlreadyShown || isMobile;
   const [progress, setProgress] = useState(skipIntro ? 100 : 0);
   const [done, setDone] = useState(skipIntro);
   const [loaderGone, setLoaderGone] = useState(skipIntro);
@@ -100,7 +128,7 @@ export default function Home() {
 
       <Header />
 
-      <main id="top">
+      <main id="main-content">
         <HeroVideo enabled={heroEnabled} isMobile={isMobile} />
         <TranslationManifesto reduced={reduced} />
         <SelectedWork reduced={reduced} isMobile={isMobile} />
