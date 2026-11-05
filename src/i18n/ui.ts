@@ -3,6 +3,7 @@ import type { L, LL } from './lang';
 /** All section + detail UI copy, bilingual. Resolve strings with useLang().t(). */
 export const ui = {
   nav: {
+    sales: { ko: '세일즈 자료', en: 'Sales Resources' } as L,
     contact: { ko: '연락', en: 'Contact' } as L,
   },
   lang: {
@@ -166,10 +167,16 @@ export const ui = {
       en: ['YOUR MEDICINE', 'DESERVES TO BE UNDERSTOOD.'],
     } as LL,
     text: {
-      ko: '새로운 시각 언어가 필요한 치료와 기술을 이야기해주세요.',
-      en: 'Tell us about the therapy or technology that needs a new visual language.',
+      ko: '치료·제품과 필요한 결과물을 알려주세요. 보통 1영업일 내 회신합니다.',
+      en: 'Tell us about the therapy or product and what you need. We usually reply within one business day.',
     } as L,
-    cta: { ko: '프로젝트 시작', en: 'Start a Project' } as L,
+    cta: { ko: '프로젝트 브리프 작성', en: 'Write a Project Brief' } as L,
+    submit: { ko: '이메일 브리프 보내기', en: 'Send Email Brief' } as L,
+    direct: { ko: '직접 이메일', en: 'Email directly' } as L,
+    note: {
+      ko: '제출하면 작성한 내용이 담긴 이메일 앱이 열립니다. 전송 전 내용을 확인할 수 있습니다.',
+      en: 'Submitting opens your email app with the brief filled in. You can review it before sending.',
+    } as L,
   },
   detail: {
     allWork: { ko: '전체 작업', en: 'All Work' } as L,
@@ -180,6 +187,11 @@ export const ui = {
     discipline: { ko: '분야', en: 'Discipline' } as L,
     year: { ko: '연도', en: 'Year' } as L,
     reference: { ko: '레퍼런스', en: 'Reference' } as L,
+    projectType: { ko: '프로젝트 유형', en: 'Project Type' } as L,
+    scope: { ko: '담당 범위', en: 'Scope' } as L,
+    deliverables: { ko: '결과물', en: 'Deliverables' } as L,
+    review: { ko: '의료 검수', en: 'Medical Review' } as L,
+    duration: { ko: '제작 기간', en: 'Duration' } as L,
     prev: { ko: '이전', en: 'Prev' } as L,
     next: { ko: '다음', en: 'Next' } as L,
     pdbLink: { ko: 'RCSB 단백질 데이터 뱅크', en: 'RCSB Protein Data Bank' } as L,
