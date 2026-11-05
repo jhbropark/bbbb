@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components -- context module intentionally
    co-locates the provider with its hook/helpers; fast-refresh is not needed here. */
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export type Lang = 'ko' | 'en';
 
@@ -23,24 +24,36 @@ const LanguageContext = createContext<Ctx>({
 
 const KEY = 'bbbb-lang';
 
-function initialLang(): Lang {
-  if (typeof localStorage !== 'undefined') {
-    const saved = localStorage.getItem(KEY);
-    if (saved === 'ko' || saved === 'en') return saved;
-  }
-  return 'ko';
+function pathLang(pathname: string): Lang | null {
+  const value = pathname.split('/')[1];
+  return value === 'ko' || value === 'en' ? value : null;
+}
+
+function localizedPath(pathname: string, lang: Lang) {
+  const stripped = pathname.replace(/^\/(ko|en)(?=\/|$)/, '') || '/';
+  return `/${lang}${stripped}`.replace(/\/+$/, '/');
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(initialLang);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [lang, setLangState] = useState<Lang>(() => pathLang(location.pathname) || 'ko');
+
+  useEffect(() => {
+    const routeLang = pathLang(location.pathname);
+    if (routeLang && routeLang !== lang) setLangState(routeLang);
+  }, [location.pathname, lang]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
     if (typeof localStorage !== 'undefined') localStorage.setItem(KEY, lang);
   }, [lang]);
 
-  const setLang = (l: Lang) => setLangState(l);
-  const toggle = () => setLangState((p) => (p === 'ko' ? 'en' : 'ko'));
+  const setLang = (next: Lang) => {
+    setLangState(next);
+    navigate(`${localizedPath(location.pathname, next)}${location.search}${location.hash}`);
+  };
+  const toggle = () => setLang(lang === 'ko' ? 'en' : 'ko');
 
   return (
     <LanguageContext.Provider value={{ lang, setLang, toggle }}>{children}</LanguageContext.Provider>
