@@ -109,8 +109,8 @@ function staticHeader(lang) {
 }
 
 function staticFooter(lang) {
-  const links = brand.social.map((item) => `<a href="${esc(item.href)}">${esc(item.name)}</a>`).join(' · ');
-  return `<footer class="footer"><div class="shell footer-top"><strong>${esc(brand.full)}</strong><p>${esc(value(brand.tagline, lang))}</p><p><a href="/${lang}/faq/">FAQ</a> · ${links}</p></div></footer>`;
+  const links = brand.social.map((item) => `<a href="${esc(item.href)}">${esc(item.label)}</a>`).join(' · ');
+  return `<footer class="footer"><div class="shell footer-top"><strong>${esc(brand.suffix)}</strong><p>${esc(value(brand.location, lang))}</p><p><a href="/${lang}/faq/">FAQ</a> · ${links}</p></div></footer>`;
 }
 
 function homeBody(lang) {
@@ -126,7 +126,7 @@ function projectBody(project, lang) {
   const evidence = projectEvidence(project);
   const video = projectVideoMetadata(project);
   const sources = projectSourceLinks(project);
-  return `${staticHeader(lang)}<main id="main-content"><article class="detail-page"><header class="shell detail-head"><p>${esc(value(project.category, lang))} · ${esc(detail.year)}</p><h1>${esc(project.title)}</h1><p>${esc(value(detail.subtitle, lang))}</p><p>${esc(value(project.intent, lang))}</p></header>${project.poster ? `<figure class="detail-media"><img src="${esc(project.poster)}" alt="${esc(project.title)}" /></figure>` : ''}<section class="shell detail-transcript"><h2>${ko ? '영상 설명·트랜스크립트' : 'Visual description and transcript'}</h2><p>${esc(value(video.transcript, lang))}</p><p>${ko ? '음성 내레이션 없음' : 'No spoken narration'} · ${video.seconds}${ko ? '초' : ' seconds'}</p></section><div class="shell detail-grid"><div><section class="detail-block"><h2>${ko ? '개요' : 'Overview'}</h2><p>${esc(value(detail.overview, lang))}</p></section><section class="detail-block"><h2>${ko ? '시각적 접근' : 'Visual approach'}</h2><p>${esc(value(detail.approach, lang))}</p></section><section class="detail-block"><h2>${ko ? '참고 구조' : 'Reference structure'}</h2><p>${esc(detail.structure.pdb)}</p><p>${esc(detail.structure.alphafold)}</p></section><section class="detail-block"><h2>${ko ? '출처' : 'Sources'}</h2><ol>${sources.map((source) => `<li><a href="${esc(source.url)}">${esc(source.name)}</a></li>`).join('')}</ol></section></div><aside class="detail-aside"><dl><div><dt>${ko ? '프로젝트 유형' : 'Project type'}</dt><dd>${esc(value(evidence.type, lang))}</dd></div><div><dt>${ko ? '의료 검수' : 'Medical review'}</dt><dd>${esc(value(evidence.review, lang))}</dd></div><div><dt>${ko ? '외부 전문가' : 'External expert'}</dt><dd>${esc(value(evidence.reviewer, lang))}</dd></div><div><dt>${ko ? '기간' : 'Duration'}</dt><dd>${esc(value(evidence.duration, lang))}</dd></div><div><dt>${ko ? '결과물' : 'Deliverables'}</dt><dd>${esc(value(evidence.deliverables, lang))}</dd></div><div><dt>${ko ? '최종 수정' : 'Last updated'}</dt><dd>${CONTENT_LAST_MODIFIED}</dd></div></dl></aside></div><section class="shell detail-block"><h2>${ko ? '프로젝트 문의' : 'Project inquiry'}</h2><p><a href="/${lang}/#contact">${ko ? '브리프 작성' : 'Write a brief'}</a></p></section></article></main>${staticFooter(lang)}`;
+  return `${staticHeader(lang)}<main id="main-content"><article class="detail-page"><header class="shell detail-head"><p>${esc(value(project.category, lang))} · ${esc(detail.year)}</p><h1>${esc(project.title)}</h1><p>${esc(value(project.intent, lang))}</p></header>${project.poster ? `<figure class="detail-media"><img src="${esc(project.poster)}" alt="${esc(project.title)}" /></figure>` : ''}<section class="shell detail-transcript"><h2>${ko ? '영상 설명·트랜스크립트' : 'Visual description and transcript'}</h2><p>${esc(value(video.transcript, lang))}</p><p>${ko ? '음성 내레이션 없음' : 'No spoken narration'} · ${video.seconds}${ko ? '초' : ' seconds'}</p></section><div class="shell detail-grid"><div><section class="detail-block"><h2>${ko ? '개요' : 'Overview'}</h2><p>${esc(value(detail.overview, lang))}</p></section><section class="detail-block"><h2>${ko ? '시각적 접근' : 'Visual approach'}</h2><p>${esc(value(detail.approach, lang))}</p></section><section class="detail-block"><h2>${ko ? '참고 구조' : 'Reference structure'}</h2><p>${esc(detail.structure.pdb)} · ${esc(value(detail.structure.name, lang))}</p><p>${esc(value(detail.structure.note, lang))}</p><h2>AlphaFold</h2><p>${esc(value(detail.alphafold, lang))}</p></section><section class="detail-block"><h2>${ko ? '출처' : 'Sources'}</h2><ol>${sources.map((source) => `<li><a href="${esc(source.url)}">${esc(source.name)}</a></li>`).join('')}</ol></section></div><aside class="detail-aside"><dl><div><dt>${ko ? '프로젝트 유형' : 'Project type'}</dt><dd>${esc(value(evidence.type, lang))}</dd></div><div><dt>${ko ? '의료 검수' : 'Medical review'}</dt><dd>${esc(value(evidence.review, lang))}</dd></div><div><dt>${ko ? '외부 전문가' : 'External expert'}</dt><dd>${esc(value(evidence.reviewer, lang))}</dd></div><div><dt>${ko ? '기간' : 'Duration'}</dt><dd>${esc(value(evidence.duration, lang))}</dd></div><div><dt>${ko ? '결과물' : 'Deliverables'}</dt><dd>${esc(value(evidence.deliverables, lang))}</dd></div><div><dt>${ko ? '최종 수정' : 'Last updated'}</dt><dd>${CONTENT_LAST_MODIFIED}</dd></div></dl></aside></div><section class="shell detail-block"><h2>${ko ? '프로젝트 문의' : 'Project inquiry'}</h2><p><a href="/${lang}/#contact">${ko ? '브리프 작성' : 'Write a brief'}</a></p></section></article></main>${staticFooter(lang)}`;
 }
 
 function faqBody(lang) {
@@ -242,7 +242,7 @@ Canonical URL: ${SITE}/
 Location: Seoul, Republic of Korea
 Languages: Korean and English
 Contact: ${brand.email}
-Official profiles: ${brand.social.map((item) => `${item.name} ${item.href}`).join(' | ')}
+Official profiles: ${brand.social.map((item) => `${item.label} ${item.href}`).join(' | ')}
 
 ## Entity summary
 ${homeMeta.en.description}
