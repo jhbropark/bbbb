@@ -1,30 +1,74 @@
-import { useEffect } from 'react';
-import { Link, useParams, Navigate } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
-import { brand, projects, tools } from '../data/brand';
+import { brand, projects, projectEvidence, tools } from '../data/brand';
 import { Footer } from '../components/Footer';
 import { LangToggle } from '../components/LangToggle';
 import { useLang } from '../i18n/lang';
 import { ui } from '../i18n/ui';
+import { applySeo, SITE_URL } from '../seo';
+import NotFound from './NotFound';
+
+function LazyDetailVideo({ src, poster }: { src: string; poster?: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.load();
+          video.play().catch(() => {});
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px 0px' },
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+  return (
+    <video ref={ref} className="detail-video" poster={poster} muted loop playsInline preload="none" aria-hidden="true">
+      <source src={src} type="video/mp4" />
+    </video>
+  );
+}
 
 export default function WorkDetail() {
   const { slug } = useParams();
-  const { t } = useLang();
+  const { lang, t } = useLang();
   const index = projects.findIndex((p) => p.slug === slug);
 
-  // Update the document title for shareable deep links.
   useEffect(() => {
-    const p = projects[index];
-    if (p) document.title = `${p.title} — ${brand.full}`;
-    return () => {
-      document.title = `${brand.full} — Medicine, Made Visible`;
-    };
-  }, [index]);
+    const project = projects[index];
+    if (!project) return;
+    const description = t(project.intent);
+    const route = `/${lang}/work/${project.slug}/`;
+    applySeo({
+      title: `${project.title} — ${brand.full}`,
+      description,
+      path: route,
+      lang,
+      image: project.poster,
+      type: 'article',
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@type': 'CreativeWork',
+        name: project.title,
+        description,
+        url: `${SITE_URL}${route}`,
+        image: project.poster ? `${SITE_URL}${project.poster}` : undefined,
+        creator: { '@type': 'Organization', name: brand.full, url: SITE_URL },
+        inLanguage: lang,
+      },
+    });
+  }, [index, lang, t]);
 
-  if (index === -1) return <Navigate to="/" replace />;
+  if (index === -1) return <NotFound />;
 
   const p = projects[index];
   const d = p.detail;
+  const evidence = projectEvidence(p);
   const prev = projects[(index - 1 + projects.length) % projects.length];
   const next = projects[(index + 1) % projects.length];
   const rcsbUrl = /^PDB\s+\w{4}$/i.test(d.structure.pdb)
@@ -34,12 +78,12 @@ export default function WorkDetail() {
   return (
     <div className="detail">
       <header className="detail-bar">
-        <Link to="/" className="hdr-brand" aria-label={`${brand.full} home`}>
+        <Link to={`/${lang}/`} className="hdr-brand" aria-label={`${brand.full} home`}>
           <img className="hdr-logo" src="/assets/logo.png" alt="" />
           <span className="hdr-brand-sub">{brand.suffix}</span>
         </Link>
         <div className="detail-bar-right">
-          <Link to="/#work" className="ul-link detail-back">
+          <Link to={`/${lang}/#work`} className="ul-link detail-back">
             <ArrowLeft size={16} strokeWidth={2} />
             <span>{t(ui.detail.allWork)}</span>
           </Link>
@@ -58,16 +102,7 @@ export default function WorkDetail() {
 
         <div className="detail-media shell" data-detail-in>
           {p.media === 'video' && p.src ? (
-            <video
-              className="detail-video"
-              src={p.src}
-              poster={p.poster}
-              muted
-              loop
-              playsInline
-              autoPlay
-              aria-hidden="true"
-            />
+            <LazyDetailVideo src={p.src} poster={p.poster} />
           ) : (
             p.poster && <img className="detail-video" src={p.poster} alt="" aria-hidden="true" />
           )}
@@ -138,6 +173,26 @@ export default function WorkDetail() {
                 <dt>{t(ui.detail.reference)}</dt>
                 <dd>{d.structure.pdb} · AlphaFold</dd>
               </div>
+              <div>
+                <dt>{t(ui.detail.projectType)}</dt>
+                <dd>{t(evidence.type)}</dd>
+              </div>
+              <div>
+                <dt>{t(ui.detail.scope)}</dt>
+                <dd>{t(evidence.scope)}</dd>
+              </div>
+              <div>
+                <dt>{t(ui.detail.deliverables)}</dt>
+                <dd>{t(evidence.deliverables)}</dd>
+              </div>
+              <div>
+                <dt>{t(ui.detail.review)}</dt>
+                <dd>{t(evidence.review)}</dd>
+              </div>
+              <div>
+                <dt>{t(ui.detail.duration)}</dt>
+                <dd>{t(evidence.duration)}</dd>
+              </div>
             </dl>
             <ul className="detail-tools">
               {tools.map((tool) => (
@@ -149,13 +204,13 @@ export default function WorkDetail() {
         </div>
 
         <nav className="shell detail-nav" aria-label="More work">
-          <Link className="detail-nav-item detail-nav-prev" to={`/work/${prev.slug}`}>
+          <Link className="detail-nav-item detail-nav-prev" to={`/${lang}/work/${prev.slug}/`}>
             <span className="detail-nav-label">
               <ArrowLeft size={15} strokeWidth={2} /> {t(ui.detail.prev)}
             </span>
             <span className="detail-nav-title">{prev.title}</span>
           </Link>
-          <Link className="detail-nav-item detail-nav-next" to={`/work/${next.slug}`}>
+          <Link className="detail-nav-item detail-nav-next" to={`/${lang}/work/${next.slug}/`}>
             <span className="detail-nav-label">
               {t(ui.detail.next)} <ArrowRight size={15} strokeWidth={2} />
             </span>
@@ -166,11 +221,11 @@ export default function WorkDetail() {
         <section className="shell detail-cta">
           <h2 className="detail-cta-title">{t(ui.detail.ctaTitle)}</h2>
           <div className="detail-cta-actions">
-            <a className="btn btn-solid" href={`mailto:${brand.email}`}>
+            <Link className="btn btn-solid" to={`/${lang}/#contact`}>
               <span>{t(ui.detail.startProject)}</span>
               <ArrowRight className="btn-ico" size={18} strokeWidth={2} />
-            </a>
-            <Link className="btn btn-line" to="/#work">
+            </Link>
+            <Link className="btn btn-line" to={`/${lang}/#work`}>
               {t(ui.detail.backToWork)}
             </Link>
           </div>
