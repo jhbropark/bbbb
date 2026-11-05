@@ -52,7 +52,8 @@ export function useVideoScrub(
 
     video.pause();
 
-    const centres = [0.06, 0.3, 0.52, 0.72, 0.92];
+    // The first message must be fully readable before the user scrolls.
+    const centres = [0, 0.3, 0.52, 0.72, 0.92];
     const HALF = 0.15;
 
     let targetTime = 0;
