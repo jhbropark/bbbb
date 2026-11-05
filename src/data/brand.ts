@@ -14,10 +14,11 @@ export const brand = {
   sloganEn: 'MEDICINE, MADE VISIBLE.',
   sloganKo: ['의학을,', '이해하는 언어로 옮깁니다.'],
   social: [
-    { label: 'Instagram', href: 'https://instagram.com' },
-    { label: 'YouTube', href: 'https://www.youtube.com/@bbbb.beauty.official' },
-    { label: 'LinkedIn', href: 'https://linkedin.com' },
+    { label: 'Instagram', href: 'https://www.instagram.com/bbbb.beauty_official/' },
+    { label: 'YouTube', href: 'https://www.youtube.com/@bbbb.beauty' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/bbbbbeauty-jay/' },
   ],
+  sales: 'https://sales.bbbb.beauty/',
 };
 
 export const nav: { label: L; href: string }[] = [
@@ -366,6 +367,30 @@ export const projects: Project[] = [
     },
   },
 ];
+
+export function projectEvidence(project: Project) {
+  const concept = project.category.en === 'Concept Study';
+  return {
+    type: concept
+      ? ({ ko: '콘셉트 스터디', en: 'Concept Study' } as L)
+      : ({ ko: '자체 R&D', en: 'Self-initiated R&D' } as L),
+    scope: {
+      ko: '비주얼 리서치 · 아트 디렉션 · CGI 제작',
+      en: 'Visual research · Art direction · CGI production',
+    } as L,
+    deliverables: concept
+      ? ({ ko: '콘셉트 필름 · 비주얼 시스템', en: 'Concept film · Visual system' } as L)
+      : ({ ko: 'R&D 필름 · 비주얼 시스템', en: 'R&D film · Visual system' } as L),
+    review: {
+      ko: '공개 구조 데이터 기반 내부 검토 · 외부 의료 전문가 검수 미포함',
+      en: 'Internal review based on public structural data · No external medical review',
+    } as L,
+    duration: {
+      ko: '내부 연구 프로젝트 · 기간 비공개',
+      en: 'Internal research project · Duration not published',
+    } as L,
+  };
+}
 
 export const capabilities: { title: L; desc: L }[] = [
   {
