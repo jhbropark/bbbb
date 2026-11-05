@@ -7,7 +7,7 @@ import { ui } from '../i18n/ui';
 import { LangToggle } from './LangToggle';
 
 export function Header() {
-  const { t } = useLang();
+  const { lang, t } = useLang();
   const [dark, setDark] = useState(false);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLElement>(null);
@@ -54,11 +54,11 @@ export function Header() {
 
   return (
     <header ref={ref} className={`hdr${dark ? ' hdr--dark' : ''}${open ? ' hdr--open' : ''}`}>
-      <a className="skip-link" href="#work">
-        Skip to content
+      <a className="skip-link" href="#main-content">
+        {lang === 'ko' ? '본문으로 건너뛰기' : 'Skip to content'}
       </a>
       <div className="hdr-inner">
-        <a href="#top" className="hdr-brand" onClick={go('#top')} aria-label={`${brand.full} home`}>
+        <a href={`/${lang}/#main-content`} className="hdr-brand" onClick={go('#main-content')} aria-label={`${brand.full} home`}>
           <img className="hdr-logo" src="/assets/logo.png" alt="" />
           <span className="hdr-brand-sub">{brand.suffix}</span>
         </a>
@@ -69,6 +69,9 @@ export function Header() {
               {t(n.label)}
             </a>
           ))}
+          <a className="ul-link hdr-link" href={brand.sales} target="_blank" rel="noreferrer noopener">
+            {t(ui.nav.sales)}
+          </a>
           <LangToggle className="hdr-lang" />
         </nav>
 
@@ -94,6 +97,9 @@ export function Header() {
               {t(n.label)}
             </a>
           ))}
+          <a href={brand.sales} target="_blank" rel="noreferrer noopener">
+            {t(ui.nav.sales)}
+          </a>
         </nav>
         <LangToggle className="hdr-mobile-lang" />
       </div>

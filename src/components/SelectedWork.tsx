@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { useReveal } from '../hooks/useReveal';
 import { BioField } from './BioField';
-import { projects, type Project } from '../data/brand';
+import { projects, projectEvidence, type Project } from '../data/brand';
 import { useLang } from '../i18n/lang';
 import { ui } from '../i18n/ui';
 
@@ -53,10 +53,11 @@ function WorkVideo({ src, poster, isMobile }: { src: string; poster: string; isM
 }
 
 function Card({ p, i, isMobile }: { p: Project; i: number; isMobile: boolean }) {
-  const { t } = useLang();
+  const { lang, t } = useLang();
+  const evidence = projectEvidence(p);
   return (
     <Link
-      to={`/work/${p.slug}`}
+      to={`/${lang}/work/${p.slug}/`}
       className={`work-card work-card--${p.size}`}
       data-reveal
       data-cursor="View"
@@ -70,6 +71,7 @@ function Card({ p, i, isMobile }: { p: Project; i: number; isMobile: boolean }) 
         </div>
       )}
       <div className="work-meta">
+        <span className="work-type">{t(evidence.type)}</span>
         <h3 className="work-title">{p.title}</h3>
         <p className="work-cat">
           {t(p.category)} · {t(p.kind)}

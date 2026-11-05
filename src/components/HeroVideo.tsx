@@ -16,8 +16,10 @@ export function HeroVideo({ enabled, isMobile }: Props) {
 
   useVideoScrub(sectionRef, videoRef, { enabled });
 
-  // Desktop must never receive the mobile encode.
-  const src = isMobile ? '/assets/BIO4-mobile.mp4' : '/assets/BIO4-desktop.mp4';
+  // Mobile uses a static, instantly readable hero. Desktop loads only video metadata
+  // until the user starts scrolling the scrub sequence.
+  const mp4 = isMobile ? '/assets/BIO4-mobile.mp4' : '/assets/BIO4-desktop.mp4';
+  const webm = isMobile ? '/assets/BIO4-mobile.webm' : '/assets/BIO4-desktop.webm';
 
   return (
     <section
@@ -35,13 +37,13 @@ export function HeroVideo({ enabled, isMobile }: Props) {
             poster="/assets/BIO4-poster.jpg"
             muted
             playsInline
-            preload="auto"
-            autoPlay={!enabled}
+            preload={isMobile ? 'none' : 'metadata'}
             aria-hidden="true"
             tabIndex={-1}
             style={{ objectPosition: isMobile ? '50% 42%' : 'center center' }}
           >
-            <source src={src} type="video/mp4" />
+            <source src={webm} type="video/webm" />
+            <source src={mp4} type="video/mp4" />
           </video>
         </div>
 
@@ -49,30 +51,33 @@ export function HeroVideo({ enabled, isMobile }: Props) {
           <p className="hero-eyebrow">{t(ui.hero.eyebrow)}</p>
 
           <div className="hero-stages">
-            {ui.hero.stages.map((s, i) => (
-              <div className="hero-stage" data-hero-stage key={i} aria-hidden={i !== 0}>
-                <h1 className={`hero-title${s.lead ? ' hero-title--lead' : ''}`}>
-                  {(lang === 'ko' ? s.ko : s.en).map((l) => (
-                    <span className="hero-title-line" key={l}>
-                      {l}
-                    </span>
-                  ))}
-                </h1>
-                {s.lead && (
-                  <>
-                    <p className="hero-sub">{t(ui.hero.sub)}</p>
-                    <div className="hero-cta">
-                      <a className="btn btn-solid" href="#work">
-                        {t(ui.hero.viewWork)}
-                      </a>
-                      <a className="btn btn-line" href="#contact">
-                        {t(ui.hero.startProject)}
-                      </a>
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
+            {ui.hero.stages.map((s, i) => {
+              const TitleTag = i === 0 ? 'h1' : 'p';
+              return (
+                <div className="hero-stage" data-hero-stage key={i} aria-hidden={i !== 0}>
+                  <TitleTag className={`hero-title${s.lead ? ' hero-title--lead' : ''}`}>
+                    {(lang === 'ko' ? s.ko : s.en).map((l) => (
+                      <span className="hero-title-line" key={l}>
+                        {l}
+                      </span>
+                    ))}
+                  </TitleTag>
+                  {s.lead && (
+                    <>
+                      <p className="hero-sub">{t(ui.hero.sub)}</p>
+                      <div className="hero-cta">
+                        <a className="btn btn-solid" href="#work">
+                          {t(ui.hero.viewWork)}
+                        </a>
+                        <a className="btn btn-line" href="#contact">
+                          {t(ui.hero.startProject)}
+                        </a>
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
