@@ -11,7 +11,8 @@
       "permanent": true
     },
     { "source": "/", "destination": "/ko/", "permanent": true },
-    { "source": "/work/:slug", "destination": "/ko/work/:slug/", "permanent": true }
+    { "source": "/work/:slug", "destination": "/ko/work/:slug/", "statusCode": 301 },
+    { "source": "/work/:slug/", "destination": "/ko/work/:slug/", "statusCode": 301 }
   ],
   "headers": [
     {

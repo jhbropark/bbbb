@@ -1,15 +1,36 @@
 import { useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
-import { brand, projects, projectEvidence, tools } from '../data/brand';
+import {
+  brand,
+  CONTENT_LAST_MODIFIED,
+  projects,
+  projectEvidence,
+  projectSourceLinks,
+  projectVideoMetadata,
+  tools,
+} from '../data/brand';
 import { Footer } from '../components/Footer';
 import { LangToggle } from '../components/LangToggle';
 import { useLang } from '../i18n/lang';
 import { ui } from '../i18n/ui';
-import { applySeo, SITE_URL } from '../seo';
+import { applySeo } from '../seo';
+import { projectStructuredData } from '../structuredData';
 import NotFound from './NotFound';
 
-function LazyDetailVideo({ src, poster }: { src: string; poster?: string }) {
+function LazyDetailVideo({
+  src,
+  poster,
+  slug,
+  lang,
+  title,
+}: {
+  src: string;
+  poster?: string;
+  slug: string;
+  lang: 'ko' | 'en';
+  title: string;
+}) {
   const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     const video = ref.current;
@@ -28,8 +49,24 @@ function LazyDetailVideo({ src, poster }: { src: string; poster?: string }) {
     return () => observer.disconnect();
   }, []);
   return (
-    <video ref={ref} className="detail-video" poster={poster} muted loop playsInline preload="none" aria-hidden="true">
+    <video
+      ref={ref}
+      className="detail-video"
+      poster={poster}
+      muted
+      loop
+      playsInline
+      preload="none"
+      aria-label={`${title} ${lang === 'ko' ? '시각 연구 영상' : 'visual research film'}`}
+    >
       <source src={src} type="video/mp4" />
+      <track
+        kind="descriptions"
+        src={`/transcripts/${slug}-${lang}.vtt`}
+        srcLang={lang}
+        label={lang === 'ko' ? '한국어 영상 설명' : 'English visual description'}
+        default
+      />
     </video>
   );
 }
@@ -51,16 +88,7 @@ export default function WorkDetail() {
       lang,
       image: project.poster,
       type: 'article',
-      jsonLd: {
-        '@context': 'https://schema.org',
-        '@type': 'CreativeWork',
-        name: project.title,
-        description,
-        url: `${SITE_URL}${route}`,
-        image: project.poster ? `${SITE_URL}${project.poster}` : undefined,
-        creator: { '@type': 'Organization', name: brand.full, url: SITE_URL },
-        inLanguage: lang,
-      },
+      jsonLd: projectStructuredData(project, lang),
     });
   }, [index, lang, t]);
 
@@ -69,11 +97,11 @@ export default function WorkDetail() {
   const p = projects[index];
   const d = p.detail;
   const evidence = projectEvidence(p);
+  const videoMeta = projectVideoMetadata(p);
+  const sources = projectSourceLinks(p);
   const prev = projects[(index - 1 + projects.length) % projects.length];
   const next = projects[(index + 1) % projects.length];
-  const rcsbUrl = /^PDB\s+\w{4}$/i.test(d.structure.pdb)
-    ? `https://www.rcsb.org/structure/${d.structure.pdb.split(/\s+/)[1]}`
-    : 'https://www.rcsb.org/';
+  const rcsbUrl = sources[0].url;
 
   return (
     <div className="detail">
@@ -102,11 +130,19 @@ export default function WorkDetail() {
 
         <div className="detail-media shell" data-detail-in>
           {p.media === 'video' && p.src ? (
-            <LazyDetailVideo src={p.src} poster={p.poster} />
+            <LazyDetailVideo src={p.src} poster={p.poster} slug={p.slug} lang={lang} title={p.title} />
           ) : (
             p.poster && <img className="detail-video" src={p.poster} alt="" aria-hidden="true" />
           )}
         </div>
+
+        <details className="shell detail-transcript">
+          <summary>{lang === 'ko' ? '영상 설명·트랜스크립트' : 'Visual description and transcript'}</summary>
+          <p>{t(videoMeta.transcript)}</p>
+          <p className="detail-transcript-note">
+            {lang === 'ko' ? '이 영상에는 음성 내레이션이 없습니다.' : 'This film contains no spoken narration.'}
+          </p>
+        </details>
 
         <div className="shell detail-grid">
           <div className="detail-body">
@@ -153,6 +189,19 @@ export default function WorkDetail() {
               <h2 className="detail-h2">{t(ui.detail.visualApproach)}</h2>
               <p className="detail-lead">{t(d.approach)}</p>
             </section>
+
+            <section className="detail-block" data-detail-in>
+              <h2 className="detail-h2">{lang === 'ko' ? '출처' : 'Sources'}</h2>
+              <ol className="detail-source-list">
+                {sources.map((source) => (
+                  <li key={source.url}>
+                    <a className="ul-link detail-ref-link" href={source.url} target="_blank" rel="noreferrer noopener">
+                      {source.name} <ArrowUpRight size={15} strokeWidth={2} />
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </section>
           </div>
 
           <aside className="detail-meta" data-detail-in>
@@ -192,6 +241,14 @@ export default function WorkDetail() {
               <div>
                 <dt>{t(ui.detail.duration)}</dt>
                 <dd>{t(evidence.duration)}</dd>
+              </div>
+              <div>
+                <dt>{lang === 'ko' ? '외부 전문가' : 'External expert'}</dt>
+                <dd>{t(evidence.reviewer)}</dd>
+              </div>
+              <div>
+                <dt>{lang === 'ko' ? '최종 수정' : 'Last updated'}</dt>
+                <dd>{CONTENT_LAST_MODIFIED}</dd>
               </div>
             </dl>
             <ul className="detail-tools">

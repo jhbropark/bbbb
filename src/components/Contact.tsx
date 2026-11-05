@@ -4,6 +4,7 @@ import { useReveal } from '../hooks/useReveal';
 import { brand } from '../data/brand';
 import { useLang } from '../i18n/lang';
 import { ui } from '../i18n/ui';
+import { trackEvent } from '../analytics';
 
 export function Contact({ reduced }: { reduced: boolean }) {
   const { lang, t } = useLang();
@@ -31,6 +32,12 @@ export function Contact({ reduced }: { reduced: boolean }) {
       '프로젝트 설명',
       get('message'),
     ].join('\n');
+    trackEvent('project_brief_prepare', {
+      language: lang,
+      deliverable: get('deliverable'),
+      budget_range: get('budget'),
+      review_plan: get('review'),
+    });
     window.location.href = `mailto:${brand.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 

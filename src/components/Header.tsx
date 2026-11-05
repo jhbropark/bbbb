@@ -69,6 +69,9 @@ export function Header() {
               {t(n.label)}
             </a>
           ))}
+          <a className="ul-link hdr-link" href={`/${lang}/faq/`}>
+            {t(ui.nav.faq)}
+          </a>
           <a className="ul-link hdr-link" href={brand.sales} target="_blank" rel="noreferrer noopener">
             {t(ui.nav.sales)}
           </a>
@@ -97,6 +100,9 @@ export function Header() {
               {t(n.label)}
             </a>
           ))}
+          <a href={`/${lang}/faq/`} onClick={() => setOpen(false)}>
+            {t(ui.nav.faq)}
+          </a>
           <a href={brand.sales} target="_blank" rel="noreferrer noopener">
             {t(ui.nav.sales)}
           </a>

@@ -6,7 +6,7 @@ import { useReducedMotion } from '../hooks/useReducedMotion';
 import { BbbbMark } from './BbbbMark';
 
 export function Footer() {
-  const { t } = useLang();
+  const { lang, t } = useLang();
   const reduced = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
   useReveal(ref, !reduced);
@@ -23,7 +23,10 @@ export function Footer() {
           <p className="footer-loc">{t(brand.location)}</p>
         </div>
 
-        <nav className="footer-social" aria-label="Social">
+        <nav className="footer-social" aria-label="Social and resources">
+          <a href={`/${lang}/faq/`} className="ul-link">
+            FAQ
+          </a>
           {brand.social.map((s) => (
             <a key={s.label} href={s.href} className="ul-link" target="_blank" rel="noreferrer noopener">
               {s.label}

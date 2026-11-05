@@ -5,6 +5,8 @@
  */
 import type { L } from '../i18n/lang';
 
+export const CONTENT_LAST_MODIFIED = '2026-11-05';
+
 export const brand = {
   name: 'bbbb',
   suffix: 'MEDICAL VISUAL',
@@ -368,6 +370,41 @@ export const projects: Project[] = [
   },
 ];
 
+const videoDurations: Record<string, number> = {
+  'molecular-intelligence': 15,
+  'genetic-interface': 10,
+  'cellular-repair': 10,
+  'cellular-defense': 10,
+  'tissue-scaffold': 10,
+  'signal-cascade': 10,
+  'microbial-systems': 10,
+  'threads-of-life': 10,
+};
+
+export function projectSourceLinks(project: Project) {
+  const pdbCode = project.detail.structure.pdb.match(/PDB\s+([A-Z0-9]{4})/i)?.[1];
+  return [
+    {
+      name: project.detail.structure.pdb,
+      url: pdbCode ? `https://www.rcsb.org/structure/${pdbCode}` : 'https://www.rcsb.org/',
+    },
+    { name: 'AlphaFold Protein Structure Database', url: 'https://alphafold.ebi.ac.uk/' },
+  ];
+}
+
+export function projectVideoMetadata(project: Project) {
+  const seconds = videoDurations[project.slug] || 10;
+  return {
+    seconds,
+    duration: `PT${seconds}S`,
+    hasAudio: false,
+    transcript: {
+      ko: `음성 내레이션이 없는 ${seconds}초 시각 연구 영상입니다. ${project.detail.overview.ko} ${project.detail.approach.ko}`,
+      en: `A ${seconds}-second visual research film with no spoken narration. ${project.detail.overview.en} ${project.detail.approach.en}`,
+    } as L,
+  };
+}
+
 export function projectEvidence(project: Project) {
   const concept = project.category.en === 'Concept Study';
   return {
@@ -385,10 +422,15 @@ export function projectEvidence(project: Project) {
       ko: '공개 구조 데이터 기반 내부 검토 · 외부 의료 전문가 검수 미포함',
       en: 'Internal review based on public structural data · No external medical review',
     } as L,
+    reviewer: {
+      ko: '외부 의료 전문가 미지정 · 임상·효능 표현은 별도 전문가 승인 필요',
+      en: 'No external medical expert assigned · Clinical or efficacy claims require separate expert approval',
+    } as L,
     duration: {
       ko: '내부 연구 프로젝트 · 기간 비공개',
       en: 'Internal research project · Duration not published',
     } as L,
+    updated: CONTENT_LAST_MODIFIED,
   };
 }
 

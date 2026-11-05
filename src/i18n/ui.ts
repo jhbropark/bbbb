@@ -4,6 +4,7 @@ import type { L, LL } from './lang';
 export const ui = {
   nav: {
     sales: { ko: '세일즈 자료', en: 'Sales Resources' } as L,
+    faq: { ko: 'FAQ', en: 'FAQ' } as L,
     contact: { ko: '연락', en: 'Contact' } as L,
   },
   lang: {

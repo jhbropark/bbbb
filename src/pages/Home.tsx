@@ -17,7 +17,8 @@ import { Process } from '../components/Process';
 import { StudioStatement } from '../components/StudioStatement';
 import { Contact } from '../components/Contact';
 import { Footer } from '../components/Footer';
-import { applySeo, SITE_URL } from '../seo';
+import { applySeo } from '../seo';
+import { homeStructuredData } from '../structuredData';
 
 // Preview/deep-link aid: `?static` disables Lenis + hero pin (opt-in only).
 const FORCE_STATIC =
@@ -56,15 +57,7 @@ export default function Home() {
       description,
       path: `/${lang}/`,
       lang,
-      jsonLd: {
-        '@context': 'https://schema.org',
-        '@type': 'ProfessionalService',
-        name: 'bbbb MEDICAL VISUAL',
-        url: SITE_URL,
-        email: 'im@bbbb.beauty',
-        areaServed: 'Worldwide',
-        address: { '@type': 'PostalAddress', addressLocality: 'Seoul', addressCountry: 'KR' },
-      },
+      jsonLd: homeStructuredData(lang, title, description),
     });
   }, [lang, location.pathname]);
 
